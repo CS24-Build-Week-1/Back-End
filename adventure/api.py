@@ -23,6 +23,10 @@ def initialize(request):
     players = room.playerNames(player_id)
     return JsonResponse({'uuid': uuid, 'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players}, safe=True)
 
+@csrf_exempt
+@api_view(["GET"])
+def rooms(request):
+    return JsonResponse({"rooms": list(Room.objects.values().order_by('id'))})
 
 # @csrf_exempt
 @api_view(["POST"])
@@ -70,11 +74,16 @@ def say(request):
 
 # Serializers
 
-class RoomSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Room
-        fields = ('title', 'description', 'n_to', 's_to', 'e_to', 'w_to')
+# class RoomSerializer(serializers.HyperlinkedModelSerializer):
 
-class RoomViewSet(viewsets.ModelViewSet):
-    serializer_class = RoomSerializer
-    queryset = Room.objects.all()
+#     # def create(self, validated_data):
+#     # user = self.context['request'].user
+#     # note = PersonalNote.objects.create(user=user, **validated_data)
+#     # return note
+#     class Meta:
+#         model = Room
+#         fields = ('title', 'description', 'n_to', 's_to', 'e_to', 'w_to')
+
+# class RoomViewSet(viewsets.ModelViewSet):
+#     serializer_class = RoomSerializer
+#     queryset = Room.objects.all()
