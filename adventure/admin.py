@@ -15,7 +15,7 @@ class RoomAdmin(admin.ModelAdmin):
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('user','currentRoom','uuid')
 
-    inlines = [RoomInline]
+    # inlines = [RoomInline]
 
 
 

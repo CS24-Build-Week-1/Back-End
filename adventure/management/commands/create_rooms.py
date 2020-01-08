@@ -125,7 +125,7 @@ room_names = ['Amphitheater',
 MAX_X = 20
 MAX_Y = 20
 CREATE_RATE = 0.30
-CONNECTION_RATE = 0.9
+CONNECTION_RATE = 1
 
 
 class Command(BaseCommand):
