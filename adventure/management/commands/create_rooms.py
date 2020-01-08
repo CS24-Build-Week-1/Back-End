@@ -137,7 +137,7 @@ class Command(BaseCommand):
         for x in range(MAX_X):
             for y in range(MAX_Y):
                 if random.random() <= CREATE_RATE:
-                    room = Room(title = f'{random.choice(room_names)}', description=room_descriptions.pop(), pos_x=x, pos_y=y)
+                    room = Room(title = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], pos_x=x, pos_y=y)
                     room.save()
 
         # Connect the rooms
