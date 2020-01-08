@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from decouple import config
 from django.contrib.auth.models import User
 from .models import *
+from .models import Room as RoomModel
 from rest_framework.decorators import api_view
 from rest_framework import serializers, viewsets
 from .world_generate import *
@@ -27,7 +28,10 @@ def initialize(request):
 @csrf_exempt
 @api_view(["GET"])
 def rooms(request):
-    return JsonResponse({"rooms": list(Room.objects.values().order_by('id'))})
+    return JsonResponse({"rooms": list(RoomModel.objects.values().order_by('id'))})
+
+
+
 
 @api_view(["GET"])
 def generate(request):
