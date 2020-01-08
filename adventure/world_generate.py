@@ -4,8 +4,7 @@
 # You can modify generate_rooms() to create your own
 # procedural generation algorithm and use print_rooms()
 # to see the world.
-from django.contrib.auth.models import User
-from adventure.models import Player, Room
+
 
 class Room:
     def __init__(self, id, name, description, x, y):
@@ -46,12 +45,14 @@ class World:
         '''
         Fill up the grid, bottom to top, in a zig-zag pattern
         '''
+
         # Initialize the grid
         self.grid = [None] * size_y
         self.width = size_x
         self.height = size_y
         for i in range( len(self.grid) ):
             self.grid[i] = [None] * size_x
+
         # Start from lower-left corner (0,0)
         # (this will become 0 on the first step)
         x = -1 
@@ -96,59 +97,59 @@ class World:
 
 
 
-    # def print_rooms(self):
-    #     '''
-    #     Print the rooms in room_grid in ascii characters.
-    #     '''
+    def print_rooms(self):
+        '''
+        Print the rooms in room_grid in ascii characters.
+        '''
 
-    #     # Add top border
-    #     str = "# " * ((3 + self.width * 5) // 2) + "\n"
+        # Add top border
+        str = "# " * ((3 + self.width * 5) // 2) + "\n"
 
-    #     # The console prints top to bottom but our array is arranged
-    #     # bottom to top.
-    #     #
-    #     # We reverse it so it draws in the right direction.
-    #     reverse_grid = list(self.grid) # make a copy of the list
-    #     reverse_grid.reverse()
-    #     for row in reverse_grid:
-    #         # PRINT NORTH CONNECTION ROW
-    #         str += "#"
-    #         for room in row:
-    #             if room is not None and room.n_to is not None:
-    #                 str += "  |  "
-    #             else:
-    #                 str += "     "
-    #         str += "#\n"
-    #         # PRINT ROOM ROW
-    #         str += "#"
-    #         for room in row:
-    #             if room is not None and room.w_to is not None:
-    #                 str += "-"
-    #             else:
-    #                 str += " "
-    #             if room is not None:
-    #                 str += f"{room.id}".zfill(3)
-    #             else:
-    #                 str += "   "
-    #             if room is not None and room.e_to is not None:
-    #                 str += "-"
-    #             else:
-    #                 str += " "
-    #         str += "#\n"
-    #         # PRINT SOUTH CONNECTION ROW
-    #         str += "#"
-    #         for room in row:
-    #             if room is not None and room.s_to is not None:
-    #                 str += "  |  "
-    #             else:
-    #                 str += "     "
-    #         str += "#\n"
+        # The console prints top to bottom but our array is arranged
+        # bottom to top.
+        #
+        # We reverse it so it draws in the right direction.
+        reverse_grid = list(self.grid) # make a copy of the list
+        reverse_grid.reverse()
+        for row in reverse_grid:
+            # PRINT NORTH CONNECTION ROW
+            str += "#"
+            for room in row:
+                if room is not None and room.n_to is not None:
+                    str += "  |  "
+                else:
+                    str += "     "
+            str += "#\n"
+            # PRINT ROOM ROW
+            str += "#"
+            for room in row:
+                if room is not None and room.w_to is not None:
+                    str += "-"
+                else:
+                    str += " "
+                if room is not None:
+                    str += f"{room.id}".zfill(3)
+                else:
+                    str += "   "
+                if room is not None and room.e_to is not None:
+                    str += "-"
+                else:
+                    str += " "
+            str += "#\n"
+            # PRINT SOUTH CONNECTION ROW
+            str += "#"
+            for room in row:
+                if room is not None and room.s_to is not None:
+                    str += "  |  "
+                else:
+                    str += "     "
+            str += "#\n"
 
-    #     # Add bottom border
-    #     str += "# " * ((3 + self.width * 5) // 2) + "\n"
+        # Add bottom border
+        str += "# " * ((3 + self.width * 5) // 2) + "\n"
 
-    #     # Print string
-    #     print(str)
+        # Print string
+        print(str)
 
 
 w = World()
@@ -156,7 +157,7 @@ num_rooms = 100
 width = 10
 height = 10
 w.generate_rooms(width, height, num_rooms)
-# w.print_rooms()
+w.print_rooms()
 
 
 print(f"\n\nWorld\n  height: {height}\n  width: {width},\n  num_rooms: {num_rooms}\n")
