@@ -134,5 +134,5 @@ Then push to heroku.
 
 Creating your Django project within OneDrive causes problems.
 
-Repeat setup & install steps in a new directory, _outside_ of OneDrive.
+Repeat setup & install steps in a new directory, _outside_ of OneDrive.  
 
