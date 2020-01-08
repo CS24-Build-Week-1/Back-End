@@ -178,3 +178,8 @@ class Command(BaseCommand):
 
                 # if n_to.room and s_to.room and e_to.room and w_to.room == 0 :
                 #     room.delete()
+        for x in range(MAX_X):
+            for y in range(MAX_Y):
+                if current_room.connectRooms(n_to) and current_room.connectRooms(s_to) and current_room.connectRooms(e_to) and current_room.connectRooms(w_to)  == 0:
+                    room = Room(title = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], pos_x=x, pos_y=y)
+                    room.delete()
