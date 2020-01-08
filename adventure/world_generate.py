@@ -5,7 +5,125 @@
 # procedural generation algorithm and use print_rooms()
 # to see the world.
 
+from .models import Room
+import pickle
+import random
 
+room_descriptions = pickle.load(open('./room_descriptions.p', 'rb'))
+
+room_names = ['Amphitheater',
+'Antechamber',
+'Asylum',
+'Atrium',
+'Battlement',
+'Belfry',
+'Cave',
+'Cavern',
+'Chapel',
+'Cloister',
+'Coliseum',
+'Courtyard',
+'Depository',
+'Foyer',
+'Gallery',
+'Garden',
+'Garderobe',
+'Greenhouse',
+'Hideaway',
+'Hold',
+'Infirmary',
+'Keep',
+'Kitchen',
+'Laboratory',
+'Labrynth',
+'Library',
+'Minaret',
+'Mine',
+'Necropolis',
+'Nursery',
+'Observatory',
+'Office',
+'Ossuary',
+'Oubliette',
+'Pantry',
+'Park',
+'Passageway',
+'Prison',
+'Rampart',
+'Repository',
+'Room',
+'Sanctum',
+'Sepulcher',
+'Spire',
+'Stairwell',
+'Steeple',
+'Storage Room',
+'Study',
+'Sunroom',
+'Temple',
+'Threshold',
+'Tower',
+'Tunnel',
+'Turret',
+'Vault',
+'Vestibule',
+'Walkway',
+'Dormitory',
+'Eating hall',
+'Master bedroom',
+'Storeroom',
+'Forge',
+'Bath',
+'Summoning room',
+'Jail',
+'Shrine',
+'Courthall',
+'Armory',
+'Latrine',
+'Guard post',
+'Throne Room',
+'Barracks',
+'Pool/Well',
+'Pantry/Storage',
+'Wine Cellar',
+'Meditation Room',
+'Privy',
+'Ballroom',
+'Great Hall',
+'Training Hall',
+'Trophy Hall',
+'Propylaeum',
+'Conservatory',
+'Kennel',
+'Larder',
+'Crematorium',
+'Panopticon',
+'Tomb',
+'Crypt',
+'Workshop',
+'Foundry',
+'Meeting Hall',
+'Parlor',
+'Sitting Room',
+'Anteroom',
+'Entrance Hall',
+'Music Hall',
+'Theater',
+'Wardroom',
+'Closet',
+'War Room',
+'Bedchamber',
+'Cloakroom',
+'Dressing Room',
+'Studio',
+'Linen Room',
+'Boudoir',
+'Refectory',
+'Sewing Room',
+'Buttery',
+'Lavatory',
+'Bakery',
+]
 class Room:
     def __init__(self, id, name, description, x, y):
         self.id = id
@@ -15,12 +133,12 @@ class Room:
         self.s_to = None
         self.e_to = None
         self.w_to = None
-        self.x = x
-        self.y = y
+        self.pos_x = pos_x
+        self.pos_y = pos_y
     def __repr__(self):
         if self.e_to is not None:
-            return f"({self.x}, {self.y}) -> ({self.e_to.x}, {self.e_to.y})"
-        return f"({self.x}, {self.y})"
+            return f"({self.pos_x}, {self.pos_y}) -> ({self.e_to.pos_x}, {self.e_to.pos_y})"
+        return f"({self.pos_x}, {self.pos_y})"
     def connect_rooms(self, connecting_room, direction):
         '''
         Connect two rooms in the given n/s/e/w direction
@@ -55,8 +173,8 @@ class World:
 
         # Start from lower-left corner (0,0)
         # (this will become 0 on the first step)
-        x = -1 
-        y = 0
+        pos_x = -1 
+        pos_y = 0
         room_count = 0
 
         # Start generating rooms to the east
@@ -68,24 +186,26 @@ class World:
         while room_count < num_rooms:
 
             # Calculate the direction of the room to be created
-            if direction > 0 and x < size_x - 1:
+            if direction > 0 and pos_x < size_x - 1:
                 room_direction = "e"
-                x += 1
-            elif direction < 0 and x > 0:
+                pos_x += 1
+            elif direction < 0 and pos_x > 0:
                 room_direction = "w"
-                x -= 1
+                pos_x -= 1
             else:
                 # If we hit a wall, turn north and reverse direction
                 room_direction = "n"
-                y += 1
+                pos_y += 1
                 direction *= -1
 
             # Create a room in the given direction
-            room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
+            # room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
+            room = Room(room_count, name = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], pos_x, pos_y)
+            room.save()
             # Note that in Django, you'll need to save the room after you create it
 
             # Save the room in the World grid
-            self.grid[y][x] = room
+            self.grid[pos_y][pos_x] = room
 
             # Connect the new room to the previous room
             if previous_room is not None:
