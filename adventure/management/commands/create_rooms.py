@@ -122,10 +122,10 @@ room_names = ['Amphitheater',
 'Bakery',
 ]
 
-MAX_X = 20
-MAX_Y = 20
-CREATE_RATE = 0.30
-CONNECTION_RATE = 100
+MAX_X = 10
+MAX_Y = 10
+CREATE_RATE = 1.0
+CONNECTION_RATE = 1.0
 
 
 class Command(BaseCommand):
@@ -176,5 +176,5 @@ class Command(BaseCommand):
                 # if current_room.connectRooms(n_to) and current_room.connectRooms(s_to) and current_room.connectRooms(e_to) and current_room.connectRooms(w_to) is None:
                 #     current_room.delete() 
 
-                if n_to.room and s_to.room and e_to.room and w_to.room == 0 :
-                    room.delete()
+                # if n_to.room and s_to.room and e_to.room and w_to.room == 0 :
+                #     room.delete()
