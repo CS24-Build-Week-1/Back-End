@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Room, Player
-
+# from .world_generate import World
 
 class RoomInline(admin.TabularInline):
     model = Room
