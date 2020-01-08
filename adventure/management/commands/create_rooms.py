@@ -176,5 +176,5 @@ class Command(BaseCommand):
                 # if current_room.connectRooms(n_to) and current_room.connectRooms(s_to) and current_room.connectRooms(e_to) and current_room.connectRooms(w_to) is None:
                 #     current_room.delete() 
 
-                if n_to.connectRooms and s_to.connectRooms and e_to.connectRooms and w_to.connectRooms is None:
-                    current_room.delete()
+                if n_to.room and s_to.room and e_to.room and w_to.room is None:
+                    room.delete()
