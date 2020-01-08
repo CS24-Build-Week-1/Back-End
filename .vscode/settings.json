@@ -1,5 +1,5 @@
 {
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.pythonPath": "/home/ant/.local/share/virtualenvs/Back-End-F0vZ22a3/bin/python"
+    "python.pythonPath": "C:\\Users\\Rafael\\AppData\\Local\\Programs\\Python\\Python37\\python.exe"
 }
