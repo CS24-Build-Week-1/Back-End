@@ -5,8 +5,10 @@ from django.http import JsonResponse
 from decouple import config
 from django.contrib.auth.models import User
 from .models import *
+from .models import Room as RoomModel
 from rest_framework.decorators import api_view
 from rest_framework import serializers, viewsets
+from .world_generate import *
 import json
 
 # instantiate pusher
@@ -23,6 +25,20 @@ def initialize(request):
     players = room.playerNames(player_id)
     return JsonResponse({'uuid': uuid, 'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players}, safe=True)
 
+@csrf_exempt
+@api_view(["GET"])
+def rooms(request):
+    return JsonResponse({"rooms": list(RoomModel.objects.values().order_by('id'))})
+
+
+
+
+@api_view(["GET"])
+def generate(request):
+    w = World()
+    w.generate_rooms()
+
+    return JsonResponse({"rooms": list(Room.objects.values())})
 
 # @csrf_exempt
 @api_view(["POST"])
@@ -45,7 +61,7 @@ def move(request):
     elif direction == "w":
         nextRoomID = room.w_to
     if nextRoomID is not None and nextRoomID > 0:
-        nextRoom = Room.objects.get(id=nextRoomID)
+        nextRoom = RoomModel.objects.get(id=nextRoomID)
         player.currentRoom=nextRoomID
         player.save()
         players = nextRoom.playerNames(player_id)
@@ -70,11 +86,16 @@ def say(request):
 
 # Serializers
 
-class RoomSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Room
-        fields = ('title', 'description', 'n_to', 's_to', 'e_to', 'w_to')
+# class RoomSerializer(serializers.HyperlinkedModelSerializer):
 
-class RoomViewSet(viewsets.ModelViewSet):
-    serializer_class = RoomSerializer
-    queryset = Room.objects.all()
+#     # def create(self, validated_data):
+#     # user = self.context['request'].user
+#     # note = PersonalNote.objects.create(user=user, **validated_data)
+#     # return note
+#     class Meta:
+#         model = Room
+#         fields = ('title', 'description', 'n_to', 's_to', 'e_to', 'w_to')
+
+# class RoomViewSet(viewsets.ModelViewSet):
+#     serializer_class = RoomSerializer
+#     queryset = Room.objects.all()
