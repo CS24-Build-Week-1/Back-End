@@ -171,4 +171,4 @@ django_heroku.settings(locals())
 
 
 # Workaround for local dj_database_url issue; commenting out by default
-del DATABASES['default']['OPTIONS']['sslmode']
+# del DATABASES['default']['OPTIONS']['sslmode']
