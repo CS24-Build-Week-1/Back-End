@@ -125,7 +125,7 @@ room_names = ['Amphitheater',
 MAX_X = 20
 MAX_Y = 20
 CREATE_RATE = 0.30
-CONNECTION_RATE = 1
+CONNECTION_RATE = 100
 
 
 class Command(BaseCommand):
@@ -172,3 +172,6 @@ class Command(BaseCommand):
                         w_to = Room.objects.get(pos_x=x-1, pos_y=y)
                         current_room.connectRooms(w_to, 'w')
                         w_to.connectRooms(current_room, 'e')
+
+                if current_room.connectRooms(n_to) and current_room.connectRooms(s_to) and current_room.connectRooms(e_to) and current_room.connectRooms(w_to) is None:
+                    current_room.delete() 
