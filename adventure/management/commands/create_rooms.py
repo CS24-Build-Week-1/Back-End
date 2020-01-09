@@ -124,7 +124,7 @@ room_names = ['Amphitheater',
 
 MAX_X = 20
 MAX_Y = 20
-CREATE_RATE = 0.30
+CREATE_RATE = 0.50
 CONNECTION_RATE = 0.9
 
 
