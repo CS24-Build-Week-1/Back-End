@@ -147,16 +147,16 @@ class Command(BaseCommand):
                 current_room = Room.objects.filter(pos_x=x, pos_y=y).first()
                 if current_room is not None:
                     # Try to connect north, if you are not at the top of the map and there is a room above
-                    if y + 1 < MAX_Y and Room.objects.filter(pos_x=x, pos_y=y+1).first() and random.random() <= CONNECTION_RATE:
+                    if y - 1 < MAX_Y and Room.objects.filter(pos_x=x, pos_y=y-1).first() and random.random() <= CONNECTION_RATE:
                         # the room above the current room
-                        n_to = Room.objects.get(pos_x=x, pos_y=y+1)
+                        n_to = Room.objects.get(pos_x=x, pos_y=y-1)
                         # using the method from models/Room, create two-way connection 
                         current_room.connectRooms(n_to, 'n')
                         n_to.connectRooms(current_room, 's')
                         
                     # Try to connect south, if you are not at the bottom of the map and there is a room below
-                    if y - 1 >= 0 and Room.objects.filter(pos_x=x, pos_y=y-1).first() and random.random() <= CONNECTION_RATE:
-                        s_to = Room.objects.get(pos_x=x, pos_y=y-1)
+                    if y + 1 >= 0 and Room.objects.filter(pos_x=x, pos_y=y+1).first() and random.random() <= CONNECTION_RATE:
+                        s_to = Room.objects.get(pos_x=x, pos_y=y+1)
                         current_room.connectRooms(s_to, 's')
                         s_to.connectRooms(current_room, 'n')
 
