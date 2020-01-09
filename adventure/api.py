@@ -18,12 +18,13 @@ import json
 @api_view(["GET"])
 def initialize(request):
     user = request.user
-    player = user.player
+    player = request.user.player
     player_id = player.id
     uuid = player.uuid
     room = player.room()
+    room_id = room.id
     players = room.playerNames(player_id)
-    return JsonResponse({'uuid': uuid, 'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players}, safe=True)
+    return JsonResponse({'uuid': uuid, 'name':player.user.username, 'title':room.title, 'description':room.description, 'room_id': room.id, 'players':players}, safe=True)
 
 @csrf_exempt
 @api_view(["GET"])

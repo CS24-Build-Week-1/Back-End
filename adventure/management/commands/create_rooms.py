@@ -122,10 +122,10 @@ room_names = ['Amphitheater',
 'Bakery',
 ]
 
-MAX_X = 10
-MAX_Y = 10
-CREATE_RATE = 1.0
-CONNECTION_RATE = 1.0
+MAX_X = 20
+MAX_Y = 20
+CREATE_RATE = 0.50
+CONNECTION_RATE = 0.9
 
 
 class Command(BaseCommand):
