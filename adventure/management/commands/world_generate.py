@@ -4,8 +4,8 @@
 # You can modify generate_rooms() to create your own
 # procedural generation algorithm and use print_rooms()
 # to see the world.
-
-from .models import Room
+from django.core.management.base import BaseCommand, CommandError
+from adventure.models import Room as RoomModel
 import pickle
 import random
 
@@ -124,21 +124,28 @@ room_names = ['Amphitheater',
 'Lavatory',
 'Bakery',
 ]
+
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+
+        Room.objects.all().delete()
+
 class Room:
-    def __init__(self, id, name, description, x, y):
+    # Room.objects.all().delete()
+    def __init__(self, id, title, description, x, y):
         self.id = id
-        self.name = name
+        self.title = title
         self.description = description
         self.n_to = None
         self.s_to = None
         self.e_to = None
         self.w_to = None
-        self.pos_x = pos_x
-        self.pos_y = pos_y
+        self.x = x
+        self.y = y
     def __repr__(self):
         if self.e_to is not None:
-            return f"({self.pos_x}, {self.pos_y}) -> ({self.e_to.pos_x}, {self.e_to.pos_y})"
-        return f"({self.pos_x}, {self.pos_y})"
+            return f"({self.x}, {self.y}) -> ({self.e_to.x}, {self.e_to.y})"
+        return f"({self.x}, {self.y})"
     def connect_rooms(self, connecting_room, direction):
         '''
         Connect two rooms in the given n/s/e/w direction
@@ -173,8 +180,8 @@ class World:
 
         # Start from lower-left corner (0,0)
         # (this will become 0 on the first step)
-        pos_x = -1 
-        pos_y = 0
+        x = -1 
+        y = 0
         room_count = 0
 
         # Start generating rooms to the east
@@ -186,27 +193,27 @@ class World:
         while room_count < num_rooms:
 
             # Calculate the direction of the room to be created
-            if direction > 0 and pos_x < size_x - 1:
+            if direction > 0 and x < size_x - 1:
                 room_direction = "e"
-                pos_x += 1
-            elif direction < 0 and pos_x > 0:
+                x += 1
+            elif direction < 0 and x > 0:
                 room_direction = "w"
-                pos_x -= 1
+                x -= 1
             else:
                 # If we hit a wall, turn north and reverse direction
                 room_direction = "n"
-                pos_y += 1
+                y += 1
                 direction *= -1
 
             # Create a room in the given direction
             # room = Room(room_count, "A Generic Room", "This is a generic room.", x, y)
-            room = Room(room_count, name = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], pos_x, pos_y)
+            room = RoomModel(room_count, title = random.choice(room_names), description=room_descriptions.pop()[:450], x=x, y=y)
             room.save()
             # Note that in Django, you'll need to save the room after you create it
 
             # Save the room in the World grid
-            self.grid[pos_y][pos_x] = room
-
+            self.grid[y][x] = room
+            
             # Connect the new room to the previous room
             if previous_room is not None:
                 previous_room.connect_rooms(room, room_direction)

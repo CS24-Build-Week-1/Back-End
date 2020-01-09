@@ -8,7 +8,7 @@ from .models import *
 from .models import Room as RoomModel
 from rest_framework.decorators import api_view
 from rest_framework import serializers, viewsets
-from .world_generate import *
+# from .world_generate import *
 import json
 
 # instantiate pusher
@@ -33,12 +33,12 @@ def rooms(request):
 
 
 
-@api_view(["GET"])
-def generate(request):
-    w = World()
-    w.generate_rooms()
+# @api_view(["GET"])
+# def generate(request):
+#     w = World()
+#     w.generate_rooms()
 
-    return JsonResponse({"rooms": list(Room.objects.values())})
+#     return JsonResponse({"rooms": list(Room.objects.values())})
 
 # @csrf_exempt
 @api_view(["POST"])
