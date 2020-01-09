@@ -12,8 +12,8 @@ class Room(models.Model):
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
     w_to = models.IntegerField(default=0)
-    pos_x = models.PositiveIntegerField()
-    pos_y = models.PositiveIntegerField()
+    pos_x = models.PositiveIntegerField(default=0)
+    pos_y = models.PositiveIntegerField(default=0)
 
 
     def connectRooms(self, destinationRoom, direction):
@@ -45,6 +45,7 @@ class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     currentRoom = models.IntegerField(default=0)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+
     def initialize(self):
         if self.currentRoom == 0:
             self.currentRoom = Room.objects.first().id
