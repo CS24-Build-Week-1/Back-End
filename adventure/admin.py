@@ -10,7 +10,7 @@ class PlayerInline(admin.TabularInline):
     model = Player
 
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'n_to','s_to','pos_x', 'pos_y')
+    list_display = ('title', 'description', 'n_to','s_to','e_to','w_to','pos_x', 'pos_y')
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('user','currentRoom','uuid')
