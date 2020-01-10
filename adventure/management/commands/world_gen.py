@@ -122,12 +122,16 @@ room_names = ['Amphitheater',
 'Bakery',
 ]
 
+MAX_X = 20
+MAX_Y = 20
+CREATE_RATE = 0.50
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
 
         class Room():
             total = 0
-            def __init__(self, x, y, n=None, s=None, e=None, w=None):
+            def __init__(self, title, description, x, y, n=None, s=None, e=None, w=None):
                 self.n_to = n
                 self.s_to = s
                 self.e_to = e
@@ -174,8 +178,8 @@ class Command(BaseCommand):
         for y in range(width):
             row = []
             for x in range(width):
-                row.append(Room(x, y))
-                room = Room(title = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], pos_x=x, pos_y=y)
+                room = row.append(Room(title = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], x = x, y = y))
+                # row.append(room(x, y))
                 room.save()
             grid.append(row)
         x = width // 2
