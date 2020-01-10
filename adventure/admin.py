@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Room, Player
+from .models import Room, Player, Item
 # from .world_generate import World
 
 class RoomInline(admin.TabularInline):
@@ -15,5 +15,9 @@ class RoomAdmin(admin.ModelAdmin):
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('user','currentRoom','uuid')
 
+class ItemInline(admin.TabularInline):
+    model = Item
+
 admin.site.register(Room, RoomAdmin)
 admin.site.register(Player, PlayerAdmin)
+admin.site.register(Item, ItemAdmin)
