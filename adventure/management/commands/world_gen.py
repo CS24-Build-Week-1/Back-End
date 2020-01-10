@@ -130,6 +130,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         class RoomModel():
+            
             total = 0
             def __init__(self, title, description, x, y, n=None, s=None, e=None, w=None):
                 self.grid = None
@@ -154,6 +155,7 @@ class Command(BaseCommand):
                 else:
                     print("Invalid direction")
                     return
+        # RoomModel.objects.all().delete()
         def show_grid(grid):
             for row in grid:
                 roomline = []
@@ -185,7 +187,8 @@ class Command(BaseCommand):
                     # room.save()
                 room = RoomModel(title = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], x = x, y = y)
                 row.append(room)
-                room.save()
+                print("type*****", room)
+                # room.save()
                 # r.save()
             grid.append(row)
         x = width // 2
