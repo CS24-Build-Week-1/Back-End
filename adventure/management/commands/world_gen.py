@@ -179,12 +179,14 @@ class Command(BaseCommand):
         for y in range(width):
             row = []
             for x in range(width):
-                # if random.random() <= CREATE_RATE:
                 # room = RoomModel(title = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], x = x, y = y)
                 # if room is not None:
                     # room = row.append(Room(title = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], x = x, y = y))
                     # room.save()
-                row.append(RoomModel(title = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], x = x, y = y))
+                room = RoomModel(title = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], x = x, y = y)
+                row.append(room)
+                room.save()
+                # r.save()
             grid.append(row)
         x = width // 2
         y = width // 2
