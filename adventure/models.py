@@ -47,9 +47,11 @@ class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     currentRoom = models.IntegerField(default=0)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
+    inventory = models.ArrayField(models.CharField(max_length=500, default="No items in inventory"))
     def initialize(self):
         if self.currentRoom == 0:
             self.currentRoom = Room.objects.first().id
+            self.inventory = Player.objects.get(id=self.inventory)
             self.save()
     def room(self):
         try:
@@ -57,6 +59,15 @@ class Player(models.Model):
         except Room.DoesNotExist:
             self.initialize()
             return self.room()
+    def check_inventory(self):
+        # return f'Inventory: Item.objects.get(id=self.inventory)'
+        return Item.objects.get(id=self.inventory)
+    def pick_up_item(self, item):
+        pass
+    def drop_item(self, item):
+        pass
+
+# class Item(models.Model):
 
 @receiver(post_save, sender=User)
 def create_user_player(sender, instance, created, **kwargs):

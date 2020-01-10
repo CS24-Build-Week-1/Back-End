@@ -1,5 +1,5 @@
 {
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.pythonPath": "C:\\Users\\LaVon\\.virtualenvs\\Back-End-tOXi8Zza\\Scripts\\python.exe"
+    "python.pythonPath": "/usr/bin/python3"
 }
