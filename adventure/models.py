@@ -8,6 +8,7 @@ import uuid
 class Room(models.Model):
     title = models.CharField(max_length=50, default="DEFAULT TITLE")
     description = models.CharField(max_length=500, default="DEFAULT DESCRIPTION")
+    item = models.CharField(max_length=500, default="DEFAULT ITEM")
     n_to = models.IntegerField(default=0)
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
@@ -47,7 +48,7 @@ class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     currentRoom = models.IntegerField(default=0)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
-    inventory = models.ArrayField(models.CharField(max_length=500, default="No items in inventory"))
+    inventory = models.CharField(max_length=500, default="No items in inventory")
     def initialize(self):
         if self.currentRoom == 0:
             self.currentRoom = Room.objects.first().id
@@ -59,15 +60,25 @@ class Player(models.Model):
         except Room.DoesNotExist:
             self.initialize()
             return self.room()
-    def check_inventory(self):
+    def checkInventory(self):
         # return f'Inventory: Item.objects.get(id=self.inventory)'
-        return Item.objects.get(id=self.inventory)
-    def pick_up_item(self, item):
-        pass
-    def drop_item(self, item):
-        pass
+        return Player.objects.get(id=self.inventory)
+    def pickUpItem(self, item):
+        itemID = Room.item.id
+        self.inventory = Item.objects.get(id=Room.itemID)
+        Room.objects.remove(id=Room.itemID)
+        self.save()
+    def dropItem(self, item):
+        itemID = Room.item.id
+        self.inventory = Item.objects.remove(id=Room.itemID)
+        Room.objects.add(id=Room.itemID)
+        self.save()
 
-# class Item(models.Model):
+class Item(models.Model):
+    name = models.CharField(max_length=50, default="DEFAULT NAME")
+    description = models.CharField(max_length=500, default="DEFAULT DESCRIPTION")
+    # def pickUpItem(self, item):
+
 
 @receiver(post_save, sender=User)
 def create_user_player(sender, instance, created, **kwargs):
