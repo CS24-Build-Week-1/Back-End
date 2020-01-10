@@ -253,7 +253,7 @@ class Player(models.Model):
     def initialize(self):
         if self.currentRoom == 0:
             self.currentRoom = Room.objects.first().id
-            self.inventory = Player.objects.get(id=self.inventory)
+            # self.inventory = Player.objects.get(self.inventory)
             self.save()
     def room(self):
         try:
