@@ -179,65 +179,66 @@ class Command(BaseCommand):
             row = []
             for x in range(width):
                 room = row.append(Room(title = f'{random.choice(room_names)}', description=room_descriptions.pop()[:450], x = x, y = y))
-                # row.append(room(x, y))
-                room.save()
-            grid.append(row)
-        x = width // 2
-        y = width // 2
-        history = []
-        visited = set()
-        while len(visited) < width ** 2:
-            # print('start loop')
-            # show_grid(grid)
-            # print('x', x)
-            # print('y', y)
-            r = grid[y][x]
-            visited.add(r)
-            n = grid[y - 1][x] if y > 0 else None
-            s = grid[y + 1][x] if y < width - 1 else None
-            e = grid[y][x + 1] if x < width - 1 else None
-            w = grid[y][x - 1] if x > 0 else None
-            # print(n, s, e, w)
-            directions = []
-            if n is not None and n not in visited:
-                directions.append('n')
-            if s is not None and s not in visited:
-                directions.append('s')
-            if e is not None and e not in visited:
-                directions.append('e')
-            if w is not None and w not in visited:
-                directions.append('w')
-            # print(directions)
-            if len(directions) == 0: # backtrack
-                # print('backtrack', history)
-                go_back = history.pop()
-                # go the opposite way!
-                if go_back == 'n':
-                    y += 1
-                if go_back == 's':
-                    y -= 1
-                if go_back == 'e':
-                    x -= 1
-                if go_back == 'w':
-                    x += 1
-            else: # boldly go
-                # print('boldly go')
-                direction = random.choice(directions)
-                history.append(direction)
-                if direction == 'n':
-                    r.connectRooms(n, 'n')
-                    y -= 1
-                    n.connectRooms(r, 's')
-                if direction == 's':
-                    r.connectRooms(s, 's')
-                    y += 1
-                    s.connectRooms(r, 'n')
-                if direction == 'e':
-                    r.connectRooms(e, 'e')
-                    x += 1
-                    e.connectRooms(r, 'w')
-                if direction == 'w':
-                    r.connectRooms(w, 'w')
-                    x -= 1
-                    w.connectRooms(r, 'e')
-        show_grid(grid)
+                if room is not None:
+                    # row.append(room(x, y))
+                    room.save()
+                grid.append(row)
+            x = width // 2
+            y = width // 2
+            history = []
+            visited = set()
+            while len(visited) < width ** 2:
+                # print('start loop')
+                # show_grid(grid)
+                # print('x', x)
+                # print('y', y)
+                r = grid[y][x]
+                visited.add(r)
+                n = grid[y - 1][x] if y > 0 else None
+                s = grid[y + 1][x] if y < width - 1 else None
+                e = grid[y][x + 1] if x < width - 1 else None
+                w = grid[y][x - 1] if x > 0 else None
+                # print(n, s, e, w)
+                directions = []
+                if n is not None and n not in visited:
+                    directions.append('n')
+                if s is not None and s not in visited:
+                    directions.append('s')
+                if e is not None and e not in visited:
+                    directions.append('e')
+                if w is not None and w not in visited:
+                    directions.append('w')
+                # print(directions)
+                if len(directions) == 0: # backtrack
+                    # print('backtrack', history)
+                    go_back = history.pop()
+                    # go the opposite way!
+                    if go_back == 'n':
+                        y += 1
+                    if go_back == 's':
+                        y -= 1
+                    if go_back == 'e':
+                        x -= 1
+                    if go_back == 'w':
+                        x += 1
+                else: # boldly go
+                    # print('boldly go')
+                    direction = random.choice(directions)
+                    history.append(direction)
+                    if direction == 'n':
+                        r.connectRooms(n, 'n')
+                        y -= 1
+                        n.connectRooms(r, 's')
+                    if direction == 's':
+                        r.connectRooms(s, 's')
+                        y += 1
+                        s.connectRooms(r, 'n')
+                    if direction == 'e':
+                        r.connectRooms(e, 'e')
+                        x += 1
+                        e.connectRooms(r, 'w')
+                    if direction == 'w':
+                        r.connectRooms(w, 'w')
+                        x -= 1
+                        w.connectRooms(r, 'e')
+            show_grid(grid)
