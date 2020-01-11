@@ -23,18 +23,46 @@ def initialize(request):
     player_id = player.id
     uuid = player.uuid
     room = player.room()
-    items = room.item(room).first()
-    print("init item****",items)
+    # item = room.item(room)
+    # items = item.values_list("name", "description")
+    items = room.item(room)
+    print("init item*****", items)
     room.items = items
-    # items.name = room.items
     room.save()
-    # items.save()
+    # ITEM_CREATE_RATE = .55
+    # self.location = room
+    # if random.random() > ITEM_CREATE_RATE:
+    #     # room = room.items
+    #     items = Item.spawn_item()
+    #     items = items.values_list("name", "description")
+    #     print("init item****",items)
+    #     room.items = items
+    #     room.save()
+    # # else:
+    # #     items = "Nothing to see here"
+    # #     print("init item****",items)
+    # #     room.items = False
+    # #     # items.name = room.items
+    # #     room.save()
+
+    # if room.item(room):
+    #     items = room.item(room).first()
+    #     print("init item****",items)
+    #     room.items = items
+    #     # items.name = room.items
+    #     room.save()
+    # else:
+    #     items = "Nothing to see here"
+    #     print("init item****",items)
+    #     room.items = items
+    #     # items.name = room.items
+    #     room.save()
+    #     # items.save()
     pos_x = room.pos_x
     pos_y = room.pos_y
     room_id = room.id
     players = room.playerNames(player_id)
     return JsonResponse({'uuid': uuid, 'name':player.user.username, 'inventory': player.inventory, 'title':room.title, 'description':room.description, 'items':room.items, 'room_id': room.id, 'pos_x': room.pos_x, 'pos_y': room.pos_y, 'players':players}, safe=True)
-
 @csrf_exempt
 @api_view(["GET"])
 def rooms(request):
@@ -58,11 +86,23 @@ def move(request):
     data = json.loads(request.body)
     direction = data['direction']
     room = player.room()
-    items = room.item(room).first()
-    print("init item****",items)
+    items = room.item(room)
+    print("init item*****", items)
     room.items = items
-    # items.name = room.items
     room.save()
+    # room.item(room) = None
+    # if room.items is True:
+    #     items = room.item(room).first()
+    #     print("move item****",items)
+    #     room.items = items
+    #     # items.name = room.items
+    #     room.save()
+    # else:
+    #     items = "Nothing to see here"
+    #     print("move item****",items)
+    #     room.items = items
+    #     # items.name = room.items
+    #     room.save()
     pos_x = room.pos_x
     pos_y = room.pos_y
     nextRoomID = None

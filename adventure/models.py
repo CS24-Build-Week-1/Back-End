@@ -209,7 +209,7 @@ MATERIAL_NAMES = {'Acoustium': ['Acoustium', 'Acoustium is a fictional metal fea
 class Room(models.Model):
     title = models.CharField(max_length=50, default="DEFAULT TITLE")
     description = models.CharField(max_length=500, default="DEFAULT DESCRIPTION")
-    items = models.CharField(max_length=500, default="DEFAULT ITEM")
+    items = models.CharField(max_length=500, default="DEFAULT ITEM", blank=True, null=True)
     n_to = models.IntegerField(default=0)
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
@@ -242,10 +242,17 @@ class Room(models.Model):
     def item(self, room):
         ITEM_CREATE_RATE = .55
         self.location = room
-        new_item = Item.spawn_item(self.location)
-        print("new item****",new_item) # <Item: Common Kairoseki>.
-        return Item.objects.values_list('name', 'description')
-        # print('***',Item.spawn_item(self.location))
+        if random.random() > ITEM_CREATE_RATE:
+            # new_item = Item.spawn_item(self.location)
+            new_item = Item.objects.values_list('name', 'description')
+            random_item = random.choice(new_item)
+            # print("new item****",new_item) # <Item: Common Kairoseki>.
+            # print("random item****",random_item)
+            return random_item
+            # print('***',Item.spawn_item(self.location))
+        else:
+            # print("room.item****",Room.item(room))
+            return None
     def playerNames(self, currentPlayerID):
         return [p.user.username for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
     def playerUUIDs(self, currentPlayerID):
@@ -268,16 +275,18 @@ class Player(models.Model):
         except Room.DoesNotExist:
             self.initialize()
             return self.room()
-    def item(self, item):
-        room_items = Item.objects.filter(roomID = self.id)
-        print("roomitems******",room_items)
+    def item(self):
+        # room_items = Item.objects.filter(roomID = self.id)
+        # print("roomitems******",room_items)
         # generates items in rooms, otherwise, there will never be more items in a room once they are deleted
-        # if random.random > ITEM_CREATE_RATE:
-        # return Item.spawn_item(self.location))
-        print("****************",Item.spawn_item(self.location))
+        ITEM_CREATE_RATE = .55
+        if random.random() > ITEM_CREATE_RATE:
+            spawn = Item.spawn_item()
+        else:
+            return "Nothing here"
         # print("****************",Item.spawn_item(self.location))
-        # item_queryset = Item.spawn_item(self.location)
-        # return JsonResponse
+
+        # print("****************",Item.spawn_item(self.location))
         # else:
         #     return False
     # def checkInventory(self):
@@ -296,30 +305,30 @@ class Player(models.Model):
     #     self.save()
 
 class Item(models.Model):
-    name = models.CharField(max_length=50, default="DEFAULT NAME")
-    description = models.CharField(max_length=500, default="DEFAULT DESCRIPTION")
-    location = models.ForeignKey('adventure.Room', on_delete=models.PROTECT)
+    name = models.CharField(max_length=50, default="DEFAULT NAME", blank=True, null=True)
+    description = models.CharField(max_length=500, default="DEFAULT DESCRIPTION", blank=True, null=True)
+    # location = models.ForeignKey('adventure.Room', on_delete=models.PROTECT)
     # slot = models.CharField(max_length=10)
     # def pickUpItem(self, item):
     @classmethod
-    def spawn_item(cls, room):
+    def spawn_item(cls):
         material = random.choice(list(MATERIAL_NAMES.values()))
         slot = random.choice(['helmet', 'chest', 'waist', 'pants', 'boots', 'weapon'])
         name = f'{random.choice(QUALITY_NAMES)} {material[0]}' #took out SLOT_NAMES
         description = material[1]
-        room = room
+        # room = room
 
-        item = Item(name=name, description=description, location=room)
+        item = Item(name=name, description=description)
         item.save()
         return item
     def __str__(self):
         return self.name
-    def item(self, room):
-        ITEM_CREATE_RATE = .55
-        self.location = room
-        new_item = Item.spawn_item(self.location)
-        print("new item****",new_item) # <Item: Common Kairoseki>.
-        return Item.objects.values_list('name', 'description')
+    # def item(self, room):
+    #     ITEM_CREATE_RATE = .55
+    #     self.location = room
+    #     new_item = Item.spawn_item(self.location)
+    #     print("new item****",new_item) # <Item: Common Kairoseki>.
+    #     return Item.objects.values_list('name', 'description')
 @receiver(post_save, sender=User)
 def create_user_player(sender, instance, created, **kwargs):
     if created:

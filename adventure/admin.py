@@ -19,7 +19,7 @@ class PlayerAdmin(admin.ModelAdmin):
     list_display = ('user','currentRoom','uuid', 'inventory')
 
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'location')
+    list_display = ('name', 'description') #took out 'location'
 
 
 admin.site.register(Room, RoomAdmin)
