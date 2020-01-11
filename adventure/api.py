@@ -5,8 +5,10 @@ from django.http import JsonResponse
 from decouple import config
 from django.contrib.auth.models import User
 from .models import *
+from .models import Room as RoomModel, Item as ItemModel
 from rest_framework.decorators import api_view
 from rest_framework import serializers, viewsets
+from .world_generate import *
 import json
 
 # instantiate pusher
@@ -16,13 +18,34 @@ import json
 @api_view(["GET"])
 def initialize(request):
     user = request.user
-    player = user.player
+    player = request.user.player
+    inventory = user.player.inventory
     player_id = player.id
     uuid = player.uuid
     room = player.room()
+    items = room.item(room).first()
+    print("init item****",items)
+    room.items = items
+    # items.name = room.items
+    room.save()
+    # items.save()
+    pos_x = room.pos_x
+    pos_y = room.pos_y
+    room_id = room.id
     players = room.playerNames(player_id)
-    return JsonResponse({'uuid': uuid, 'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players}, safe=True)
+    return JsonResponse({'uuid': uuid, 'name':player.user.username, 'inventory': player.inventory, 'title':room.title, 'description':room.description, 'items':room.items, 'room_id': room.id, 'pos_x': room.pos_x, 'pos_y': room.pos_y, 'players':players}, safe=True)
 
+@csrf_exempt
+@api_view(["GET"])
+def rooms(request):
+    return JsonResponse({"rooms": list(RoomModel.objects.values().order_by('id'))})
+
+@api_view(["GET"])
+def generate(request):
+    w = World()
+    w.generate_rooms()
+
+    return JsonResponse({"rooms": list(Room.objects.values())})
 
 # @csrf_exempt
 @api_view(["POST"])
@@ -35,6 +58,13 @@ def move(request):
     data = json.loads(request.body)
     direction = data['direction']
     room = player.room()
+    items = room.item(room).first()
+    print("init item****",items)
+    room.items = items
+    # items.name = room.items
+    room.save()
+    pos_x = room.pos_x
+    pos_y = room.pos_y
     nextRoomID = None
     if direction == "n":
         nextRoomID = room.n_to
@@ -45,7 +75,7 @@ def move(request):
     elif direction == "w":
         nextRoomID = room.w_to
     if nextRoomID is not None and nextRoomID > 0:
-        nextRoom = Room.objects.get(id=nextRoomID)
+        nextRoom = RoomModel.objects.get(id=nextRoomID)
         player.currentRoom=nextRoomID
         player.save()
         players = nextRoom.playerNames(player_id)
@@ -55,10 +85,10 @@ def move(request):
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has walked {dirs[direction]}.'})
         # for p_uuid in nextPlayerUUIDs:
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has entered from the {reverse_dirs[direction]}.'})
-        return JsonResponse({'name':player.user.username, 'title':nextRoom.title, 'description':nextRoom.description, 'players':players, 'error_msg':""}, safe=True)
+        return JsonResponse({'name':player.user.username, 'inventory': player.inventory, 'item': room.items, 'title':nextRoom.title, 'description':nextRoom.description, 'pos_x': room.pos_x, 'pos_y': room.pos_y,'players':players, 'error_msg':""}, safe=True)
     else:
         players = room.playerNames(player_id)
-        return JsonResponse({'name':player.user.username, 'title':room.title, 'description':room.description, 'players':players, 'error_msg':"You cannot move that way."}, safe=True)
+        return JsonResponse({'name':player.user.username, 'inventory': player.inventory, 'item': room.items, 'title':room.title, 'description':room.description, 'pos_x': room.pos_x, 'pos_y': room.pos_y, 'players':players, 'error_msg':"You cannot move that way."}, safe=True)
 
 
 @csrf_exempt
@@ -70,11 +100,16 @@ def say(request):
 
 # Serializers
 
-class RoomSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Room
-        fields = ('title', 'description', 'n_to', 's_to', 'e_to', 'w_to')
+# class RoomSerializer(serializers.HyperlinkedModelSerializer):
 
-class RoomViewSet(viewsets.ModelViewSet):
-    serializer_class = RoomSerializer
-    queryset = Room.objects.all()
+#     # def create(self, validated_data):
+#     # user = self.context['request'].user
+#     # note = PersonalNote.objects.create(user=user, **validated_data)
+#     # return note
+#     class Meta:
+#         model = Room
+#         fields = ('title', 'description', 'n_to', 's_to', 'e_to', 'w_to')
+
+# class RoomViewSet(viewsets.ModelViewSet):
+#     serializer_class = RoomSerializer
+#     queryset = Room.objects.all()
