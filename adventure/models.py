@@ -209,7 +209,7 @@ MATERIAL_NAMES = {
 class Room(models.Model):
     title = models.CharField(max_length=50, default="DEFAULT TITLE")
     description = models.CharField(max_length=500, default="DEFAULT DESCRIPTION")
-    # item = models.CharField(max_length=500, default="DEFAULT ITEM")
+    items = models.CharField(max_length=500, default="DEFAULT ITEM")
     n_to = models.IntegerField(default=0)
     s_to = models.IntegerField(default=0)
     e_to = models.IntegerField(default=0)
@@ -285,7 +285,7 @@ class Item(models.Model):
     def spawn_item(cls, room):
         material = random.choice(list(MATERIAL_NAMES.values()))
         slot = random.choice(['helmet', 'chest', 'waist', 'pants', 'boots', 'weapon'])
-        name = f'{random.choice(QUALITY_NAMES)} {material[0]} {random.choice(SLOT_NAMES[slot])}'
+        name = f'{random.choice(QUALITY_NAMES)} {material[0]}' #took out SLOT_NAMES
         description = material[1]
         room = room
 
