@@ -3,13 +3,13 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.http import JsonResponse
 import uuid
 import random
 
 QUALITY_NAMES = ['Thrash', 'Broken', 'Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Supreme']
 
-MATERIAL_NAMES = {
-'Acoustium': ['Acoustium', 'Acoustium is a fictional metal featured in the episode Shriek of the Batman Beyond series. Acoustium was found in a metal alloy of a sonic device able to generate sound waves potent enough to demolish whole buildings. It"s not clear what acoustium exactly does, except increasing the acoustic properties when included in a metallic alloy.'],
+MATERIAL_NAMES = {'Acoustium': ['Acoustium', 'Acoustium is a fictional metal featured in the episode Shriek of the Batman Beyond series. Acoustium was found in a metal alloy of a sonic device able to generate sound waves potent enough to demolish whole buildings. It"s not clear what acoustium exactly does, except increasing the acoustic properties when included in a metallic alloy.'],
 'Adamantium': ['Adamantium', 'Used in various fantasy/science fiction settings; see main article'],
 'Administratium': ['Administratium', 'Slows down chemical reactions; a reaction normally complete in less than a second will take several days in its presence. This element is a joke, a spoof on the bureaucracy of scientific establishments and on descriptions of newly discovered elements.'],
 'Afraidium': ['Afraidium', 'The robot Fender claims to be made of this metal. "It"s yellow," he states, "and tastes like chicken."'],
@@ -239,6 +239,13 @@ class Room(models.Model):
                 print("Invalid direction")
                 return
             self.save()
+    def item(self, room):
+        ITEM_CREATE_RATE = .55
+        self.location = room
+        new_item = Item.spawn_item(self.location)
+        print("new item****",new_item) # <Item: Common Kairoseki>.
+        return Item.objects.values_list('name', 'description')
+        # print('***',Item.spawn_item(self.location))
     def playerNames(self, currentPlayerID):
         return [p.user.username for p in Player.objects.filter(currentRoom=self.id) if p.id != int(currentPlayerID)]
     def playerUUIDs(self, currentPlayerID):
@@ -261,19 +268,32 @@ class Player(models.Model):
         except Room.DoesNotExist:
             self.initialize()
             return self.room()
-    def checkInventory(self):
-        # return f'Inventory: Item.objects.get(id=self.inventory)'
-        return Player.objects.get(id=self.inventory)
-    def pickUpItem(self, item):
-        itemID = Room.item.id
-        self.inventory = Item.objects.get(id=Room.itemID)
-        Room.objects.remove(id=Room.itemID)
-        self.save()
-    def dropItem(self, item):
-        itemID = Room.item.id
-        self.inventory = Item.objects.remove(id=Room.itemID)
-        Room.objects.add(id=Room.itemID)
-        self.save()
+    def item(self, item):
+        room_items = Item.objects.filter(roomID = self.id)
+        print("roomitems******",room_items)
+        # generates items in rooms, otherwise, there will never be more items in a room once they are deleted
+        # if random.random > ITEM_CREATE_RATE:
+        # return Item.spawn_item(self.location))
+        print("****************",Item.spawn_item(self.location))
+        # print("****************",Item.spawn_item(self.location))
+        # item_queryset = Item.spawn_item(self.location)
+        # return JsonResponse
+        # else:
+        #     return False
+    # def checkInventory(self):
+    #     # return f'Inventory: Item.objects.get(id=self.inventory)'
+
+    #     return Player.objects.get(id=self.inventory)
+    # def pickUpItem(self, item):
+    #     itemID = Room.item.id
+    #     self.inventory = Item.objects.get(id=Room.itemID)
+    #     Room.objects.remove(id=Room.itemID)
+    #     self.save()
+    # def dropItem(self, item):
+    #     itemID = Room.item.id
+    #     self.inventory = Item.objects.remove(id=Room.itemID)
+    #     Room.objects.add(id=Room.itemID)
+    #     self.save()
 
 class Item(models.Model):
     name = models.CharField(max_length=50, default="DEFAULT NAME")
@@ -294,7 +314,12 @@ class Item(models.Model):
         return item
     def __str__(self):
         return self.name
-
+    def item(self, room):
+        ITEM_CREATE_RATE = .55
+        self.location = room
+        new_item = Item.spawn_item(self.location)
+        print("new item****",new_item) # <Item: Common Kairoseki>.
+        return Item.objects.values_list('name', 'description')
 @receiver(post_save, sender=User)
 def create_user_player(sender, instance, created, **kwargs):
     if created:

@@ -23,19 +23,22 @@ def initialize(request):
     player_id = player.id
     uuid = player.uuid
     room = player.room()
+    items = room.item(room).first()
+    print("init item****",items)
+    room.items = items
+    # items.name = room.items
+    room.save()
+    # items.save()
     pos_x = room.pos_x
     pos_y = room.pos_y
     room_id = room.id
     players = room.playerNames(player_id)
-    return JsonResponse({'uuid': uuid, 'name':player.user.username, 'inventory':user.player.inventory, 'title':room.title, 'description':room.description, 'room_id': room.id, 'pos_x': room.pos_x, 'pos_y': room.pos_y, 'players':players}, safe=True)
+    return JsonResponse({'uuid': uuid, 'name':player.user.username, 'inventory': player.inventory, 'title':room.title, 'description':room.description, 'items':room.items, 'room_id': room.id, 'pos_x': room.pos_x, 'pos_y': room.pos_y, 'players':players}, safe=True)
 
 @csrf_exempt
 @api_view(["GET"])
 def rooms(request):
     return JsonResponse({"rooms": list(RoomModel.objects.values().order_by('id'))})
-
-
-
 
 @api_view(["GET"])
 def generate(request):
@@ -55,6 +58,11 @@ def move(request):
     data = json.loads(request.body)
     direction = data['direction']
     room = player.room()
+    items = room.item(room).first()
+    print("init item****",items)
+    room.items = items
+    # items.name = room.items
+    room.save()
     pos_x = room.pos_x
     pos_y = room.pos_y
     nextRoomID = None
@@ -73,20 +81,14 @@ def move(request):
         players = nextRoom.playerNames(player_id)
         currentPlayerUUIDs = room.playerUUIDs(player_id)
         nextPlayerUUIDs = nextRoom.playerUUIDs(player_id)
-        # ITEM_CREATE_RATE = 1
-         # generates items in rooms, otherwise, there will never be more items in a room once they are deleted
-        if random.random > .55:
-            item_spawn = ItemModel.spawn_item(self.location)
-        else:
-            return False
         # for p_uuid in currentPlayerUUIDs:
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has walked {dirs[direction]}.'})
         # for p_uuid in nextPlayerUUIDs:
         #     pusher.trigger(f'p-channel-{p_uuid}', u'broadcast', {'message':f'{player.user.username} has entered from the {reverse_dirs[direction]}.'})
-        return JsonResponse({'name':player.user.username, 'inventory': player.inventory, 'item': item_spawn, 'title':nextRoom.title, 'description':nextRoom.description, 'pos_x': room.pos_x, 'pos_y': room.pos_y,'players':players, 'error_msg':""}, safe=True)
+        return JsonResponse({'name':player.user.username, 'inventory': player.inventory, 'item': room.items, 'title':nextRoom.title, 'description':nextRoom.description, 'pos_x': room.pos_x, 'pos_y': room.pos_y,'players':players, 'error_msg':""}, safe=True)
     else:
         players = room.playerNames(player_id)
-        return JsonResponse({'name':player.user.username, 'inventory': player.inventory, 'item': item_spawn, 'title':room.title, 'description':room.description, 'pos_x': room.pos_x, 'pos_y': room.pos_y, 'players':players, 'error_msg':"You cannot move that way."}, safe=True)
+        return JsonResponse({'name':player.user.username, 'inventory': player.inventory, 'item': room.items, 'title':room.title, 'description':room.description, 'pos_x': room.pos_x, 'pos_y': room.pos_y, 'players':players, 'error_msg':"You cannot move that way."}, safe=True)
 
 
 @csrf_exempt
